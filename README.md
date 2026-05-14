@@ -139,10 +139,11 @@ After running backend server:
 | Name | Role |
 |------|------|
 | Rajvardhan Singh Chouhan | Python Developer |
-| Rajvardhan Singh Sisodia | Software Developer |
+| Rajvardhan Singh Sisodiya | Software Developer |
 | Rajkumar Patidar | web Developer |
 
 GitHub: https://github.com/rajvardhan-here
+GitHub : https://github.com/rajvardhan0308
 
 ---
 
