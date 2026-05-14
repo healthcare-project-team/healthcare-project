@@ -40,7 +40,7 @@
 
   .framework {
     z-index: 1;
-    top: 34px;
+    top: 34.1px;
     height: 28px;
     transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
       scale(1.4);
@@ -117,7 +117,7 @@
 
   a {
     color: var(--text-h);
-    font-size: 16px;
+    font-size: 16.2px;
     border-radius: 6px;
     background: var(--social-bg);
     display: flex;
@@ -154,7 +154,7 @@
 }
 
 #spacer {
-  height: 88px;
+  height: 87px;
   border-top: 1px solid var(--border);
   @media (max-width: 1024px) {
     height: 48px;
