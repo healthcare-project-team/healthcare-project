@@ -4,7 +4,7 @@ A full-stack digital healthcare web application inspired by Practo.
 Built with React.js + FastAPI + PostgreSQL — fully deployed and live!
 
 🌐 **Live Demo:** https://healthcare-backend-beige.vercel.app
-💻 **GitHub:** https://github.com/rajvardhan-here/healthcare-project
+💻 **GitHub:** https://github.com/healthcare-project-team/healthcare-project
 
 ---
 
@@ -67,7 +67,7 @@ healthcare-project/
 
 ### 1️⃣ Clone Repository
 
-git clone https://github.com/rajvardhan-here/healthcare-project.git
+git clone -  https://github.com/healthcare-project-team/healthcare-project.git
 cd healthcare-project
 
 ### 2️⃣ Backend Setup
@@ -134,13 +134,17 @@ After running backend server:
 
 ---
 
+![React](https://img.shields.io/badge/Frontend-React-blue)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-green)
+![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue)
+
 ## 🙌 Team
 
 | Name | Role |
 |------|------|
-| Rajvardhan Singh Chouhan | Python Developer |
-| Rajvardhan Singh Sisodia | Software Developer |
-| Rajkumar Patidar | web Developer |
+| Rajvardhan Singh Chouhan | Lead Backend Developer & Project Owner |
+| Rajvardhan Singh Sisodia | Frontend & Software Developer|
+| Rajkumar Patidar | Web Developer & UI Contributor |
 
 GitHub: https://github.com/rajvardhan-here
 
