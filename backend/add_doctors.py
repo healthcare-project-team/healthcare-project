@@ -24,7 +24,7 @@ doctors_data = [
     {"name": "Dr. Rohit Khanna", "email": "dr.rohit.khanna@medicare.com", "spec": "Nephrologist", "exp": 15, "fee": 900, "days": "Mon-Sat", "phone": "+91 98930 89012", "hospital": "Medanta Hospital Indore"},
     {"name": "Dr. Smita Jain", "email": "dr.smita.jain@medicare.com", "spec": "Radiologist", "exp": 12, "fee": 800, "days": "Mon-Fri", "phone": "+91 99077 67890", "hospital": "Bombay Hospital Indore"},
     {"name": "Dr. Gaurav Trivedi", "email": "dr.gaurav.trivedi@medicare.com", "spec": "Dentist", "exp": 8, "fee": 400, "days": "Mon-Sun", "phone": "+91 98272 12345", "hospital": "Smile Dental Clinic Indore"},
-    {"name": "Dr. Rekha Bhargava", "email": "dr.rekha.bhargava@medicare.com", "spec": "Physiotherapist", "exp": 11, "fee": 500, "days": "Mon-Sat", "phone": "+91 98261 56789", "hospital": "LifeCare Physio Indore"},
+    {"name": "Dr. Rekha Bhargava", "email": "dr.rekha.bhargava@medicare.com", "spec": "Physiotherapist", "exp": 17, "fee": 500, "days": "Mon-Sat", "phone": "+91 98261 56789", "hospital": "LifeCare Physio Indore"},
 ]
 
 for d in doctors_data:
