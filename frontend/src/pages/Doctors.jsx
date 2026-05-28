@@ -10,7 +10,24 @@ const doctorAvatars = {
   'Gastroenterologist': '🫁', 'Pulmonologist': '🫀', 'Oncologist': '🔬',
   'Rheumatologist': '💊', 'Nephrologist': '🩻', 'Radiologist': '📡',
   'Dentist': '🦷', 'Physiotherapist': '💪', 'Cardiothoracic Surgeon': '🫀',
-  'General': '🩺'
+}
+
+// Parse "days | phone | hospital | address | city | photo"
+function parseInfo(raw) {
+  const parts = (raw || '').split(' | ')
+  const city = parts[4]?.trim() || 'Indore'
+  let hospital = parts[2]?.trim() || ''
+  // Remove city from hospital string if present
+  ;[`, ${city}, MP`, `, ${city}`, ` ${city}, MP`].forEach(s => {
+    if (hospital.endsWith(s)) hospital = hospital.slice(0, -s.length).trim()
+  })
+  return {
+    days:     parts[0]?.trim() || '',
+    phone:    parts[1]?.trim() || '',
+    hospital,
+    city,
+    photo:    parts[5]?.trim() || '',
+  }
 }
 
 export default function Doctors() {
@@ -40,19 +57,15 @@ export default function Doctors() {
       setTimeout(() => setMessage(''), 3000)
       return
     }
-    if (!datetime) {
-      setMessage('⚠️ Please select date and time first')
-      return
-    }
+    if (!datetime) { setMessage('⚠️ Please select date and time first'); return }
     try {
       const isoDatetime = new Date(datetime).toISOString().slice(0, 19)
       await bookAppointment(doctorId, isoDatetime)
-      setMessage('✅ Appointment booked successfully! Check your dashboard.')
-      setBookingId(null)
-      setDatetime('')
+      setMessage('✅ Appointment booked! Check your dashboard.')
+      setBookingId(null); setDatetime('')
       setTimeout(() => setMessage(''), 4000)
     } catch (err) {
-      setMessage('❌ ' + (err.response?.data?.detail || 'Booking failed. Try again.'))
+      setMessage('❌ ' + (err.response?.data?.detail || 'Booking failed.'))
       setTimeout(() => setMessage(''), 4000)
     }
   }
@@ -95,85 +108,86 @@ export default function Doctors() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {doctors.map((doc) => (
-            <div key={doc.id} className="bg-white rounded-2xl shadow-sm card-hover border border-gray-100 overflow-hidden group">
+          {doctors.map((doc) => {
+            const info = parseInfo(doc.available_days)
+            // Use backend-parsed fields if available, else parse here
+            const photo    = doc.photo    || info.photo
+            const phone    = doc.phone    || info.phone
+            const hospital = doc.hospital || info.hospital
+            const city     = doc.city     || info.city
+            const days     = doc.available_days?.includes(' | ') ? info.days : doc.available_days
 
-              {/* ── CARD HEADER with real photo ── */}
-              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-5 text-center relative">
-                <div className="w-16 h-16 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white/40 group-hover:scale-110 transition-transform duration-300">
-                  {doc.photo ? (
-                    <img
-                      src={doc.photo}
-                      alt={doc.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // fallback to emoji avatar if photo fails to load
-                        e.target.style.display = 'none'
-                        e.target.nextSibling.style.display = 'flex'
-                      }}
-                    />
-                  ) : null}
-                  {/* Emoji fallback — hidden when photo loads, shown on error */}
-                  <div
-                    className="w-full h-full bg-white/20 flex items-center justify-center text-3xl backdrop-blur-sm"
-                    style={{ display: doc.photo ? 'none' : 'flex' }}
-                  >
-                    {doctorAvatars[doc.specialization] || '👨‍⚕️'}
-                  </div>
-                </div>
-                <h3 className="font-bold text-white text-sm">{doc.name || `Dr. #${doc.id}`}</h3>
-                <p className="text-teal-100 text-xs mt-1 font-medium">{doc.specialization}</p>
-                <div className="absolute top-2 right-2 bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">⭐ 4.8</div>
-              </div>
+            return (
+              <div key={doc.id} className="bg-white rounded-2xl shadow-sm card-hover border border-gray-100 overflow-hidden group">
 
-              {/* ── CARD BODY ── */}
-              <div className="p-4">
-                <div className="grid grid-cols-2 gap-2 mb-3">
-                  <div className="bg-teal-50 rounded-xl p-2 text-center">
-                    <p className="text-teal-600 font-bold text-sm">{doc.experience}yr</p>
-                    <p className="text-gray-400 text-xs">Experience</p>
+                {/* HEADER */}
+                <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-5 text-center relative">
+                  <div className="w-16 h-16 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white/40 bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    {photo ? (
+                      <img
+                        src={photo}
+                        alt={doc.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.outerHTML = `<span style="font-size:1.875rem">${doctorAvatars[doc.specialization] || '👨‍⚕️'}</span>`
+                        }}
+                      />
+                    ) : (
+                      <span className="text-3xl">{doctorAvatars[doc.specialization] || '👨‍⚕️'}</span>
+                    )}
                   </div>
-                  <div className="bg-cyan-50 rounded-xl p-2 text-center">
-                    <p className="text-cyan-600 font-bold text-sm">₹{doc.consultation_fee}</p>
-                    <p className="text-gray-400 text-xs">Fee</p>
-                  </div>
+                  <h3 className="font-bold text-white text-sm">{doc.name}</h3>
+                  <p className="text-teal-100 text-xs mt-1 font-medium">{doc.specialization}</p>
+                  <div className="absolute top-2 right-2 bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">⭐ 4.8</div>
                 </div>
 
-                {/* ── Address — no duplication ── */}
-                <div className="space-y-1 mb-3">
-                  <p className="text-gray-500 text-xs">📅 {doc.available_days}</p>
-                  {doc.phone    && <p className="text-gray-500 text-xs">📞 {doc.phone}</p>}
-                  {doc.address  && <p className="text-gray-500 text-xs">🏥 {doc.address}</p>}
-                  <p className="text-gray-400 text-xs">📍 {doc.city || 'Indore'}, MP</p>
-                </div>
-
-                {bookingId === doc.id ? (
-                  <div className="space-y-2">
-                    <input type="datetime-local"
-                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-400 transition-all"
-                      value={datetime}
-                      onChange={(e) => setDatetime(e.target.value)}
-                      min={new Date().toISOString().slice(0, 16)} />
-                    <div className="flex gap-2">
-                      <button onClick={() => handleBook(doc.id)}
-                        className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2 rounded-xl text-xs font-semibold hover:shadow-md transition-all">
-                        ✓ Confirm
-                      </button>
-                      <button onClick={() => { setBookingId(null); setDatetime('') }}
-                        className="flex-1 border border-gray-200 py-2 rounded-xl text-xs hover:bg-gray-50 transition-all text-gray-500">
-                        Cancel
-                      </button>
+                {/* BODY */}
+                <div className="p-4">
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <div className="bg-teal-50 rounded-xl p-2 text-center">
+                      <p className="text-teal-600 font-bold text-sm">{doc.experience}yr</p>
+                      <p className="text-gray-400 text-xs">Experience</p>
+                    </div>
+                    <div className="bg-cyan-50 rounded-xl p-2 text-center">
+                      <p className="text-cyan-600 font-bold text-sm">₹{doc.consultation_fee}</p>
+                      <p className="text-gray-400 text-xs">Fee</p>
                     </div>
                   </div>
-                ) : (
-                  <button onClick={() => setBookingId(doc.id)}
-                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300">
-                    Book Appointment
-                  </button>
-                )}
+
+                  <div className="space-y-1 mb-3">
+                    {days     && <p className="text-gray-500 text-xs">📅 {days}</p>}
+                    {phone    && <p className="text-gray-500 text-xs">📞 {phone}</p>}
+                    {hospital && <p className="text-gray-500 text-xs">🏥 {hospital}</p>}
+                    <p className="text-gray-400 text-xs">📍 {city}, MP</p>
+                  </div>
+
+                  {bookingId === doc.id ? (
+                    <div className="space-y-2">
+                      <input type="datetime-local"
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-400 transition-all"
+                        value={datetime} onChange={(e) => setDatetime(e.target.value)}
+                        min={new Date().toISOString().slice(0, 16)} />
+                      <div className="flex gap-2">
+                        <button onClick={() => handleBook(doc.id)}
+                          className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2 rounded-xl text-xs font-semibold hover:shadow-md transition-all">
+                          ✓ Confirm
+                        </button>
+                        <button onClick={() => { setBookingId(null); setDatetime('') }}
+                          className="flex-1 border border-gray-200 py-2 rounded-xl text-xs hover:bg-gray-50 transition-all text-gray-500">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => setBookingId(doc.id)}
+                      className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300">
+                      Book Appointment
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
