@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routers import auth, appointments, doctors, patients, medical_records
 from database.db import engine
 from database import models
+from sqlalchemy import text
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -41,3 +42,10 @@ def root():
         "version": "1.0.0",
         "docs": "/docs"
     }
+
+# ✅ Health check - Render alive + Supabase alive dono ek saath
+@app.get("/health")
+def health_check():
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+    return {"status": "ok", "db": "connected"}
