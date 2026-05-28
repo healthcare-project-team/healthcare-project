@@ -9,7 +9,8 @@ const doctorAvatars = {
   'Ophthalmologist': '👁️', 'Urologist': '🏥', 'Endocrinologist': '⚕️',
   'Gastroenterologist': '🫁', 'Pulmonologist': '🫀', 'Oncologist': '🔬',
   'Rheumatologist': '💊', 'Nephrologist': '🩻', 'Radiologist': '📡',
-  'Dentist': '🦷', 'Physiotherapist': '💪', 'General': '🩺'
+  'Dentist': '🦷', 'Physiotherapist': '💪', 'Cardiothoracic Surgeon': '🫀',
+  'General': '🩺'
 }
 
 export default function Doctors() {
@@ -56,16 +57,6 @@ export default function Doctors() {
     }
   }
 
-  const parseAvailableDays = (availableDays) => {
-    if (!availableDays) return { days: 'Mon-Fri', phone: '', hospital: '' }
-    const parts = availableDays.split(' | ')
-    return {
-      days: parts[0] || 'Mon-Fri',
-      phone: parts[1] || '',
-      hospital: parts[2] || 'Indore'
-    }
-  }
-
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">
       <div className="text-center mb-12">
@@ -104,66 +95,85 @@ export default function Doctors() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {doctors.map((doc) => {
-            const info = parseAvailableDays(doc.available_days)
-            return (
-              <div key={doc.id} className="bg-white rounded-2xl shadow-sm card-hover border border-gray-100 overflow-hidden group">
-                <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-5 text-center relative">
-                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl mx-auto mb-2 backdrop-blur-sm group-hover:scale-110 transition-transform duration-300">
+          {doctors.map((doc) => (
+            <div key={doc.id} className="bg-white rounded-2xl shadow-sm card-hover border border-gray-100 overflow-hidden group">
+
+              {/* ── CARD HEADER with real photo ── */}
+              <div className="bg-gradient-to-br from-teal-500 to-cyan-600 p-5 text-center relative">
+                <div className="w-16 h-16 rounded-full mx-auto mb-2 overflow-hidden border-2 border-white/40 group-hover:scale-110 transition-transform duration-300">
+                  {doc.photo ? (
+                    <img
+                      src={doc.photo}
+                      alt={doc.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // fallback to emoji avatar if photo fails to load
+                        e.target.style.display = 'none'
+                        e.target.nextSibling.style.display = 'flex'
+                      }}
+                    />
+                  ) : null}
+                  {/* Emoji fallback — hidden when photo loads, shown on error */}
+                  <div
+                    className="w-full h-full bg-white/20 flex items-center justify-center text-3xl backdrop-blur-sm"
+                    style={{ display: doc.photo ? 'none' : 'flex' }}
+                  >
                     {doctorAvatars[doc.specialization] || '👨‍⚕️'}
                   </div>
-                  <h3 className="font-bold text-white text-sm">{doc.name || `Dr. #${doc.id}`}</h3>
-                  <p className="text-teal-100 text-xs mt-1 font-medium">{doc.specialization}</p>
-                  <div className="absolute top-2 right-2 bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">⭐ 4.8</div>
                 </div>
-
-                <div className="p-4">
-                  <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="bg-teal-50 rounded-xl p-2 text-center">
-                      <p className="text-teal-600 font-bold text-sm">{doc.experience}yr</p>
-                      <p className="text-gray-400 text-xs">Experience</p>
-                    </div>
-                    <div className="bg-cyan-50 rounded-xl p-2 text-center">
-                      <p className="text-cyan-600 font-bold text-sm">₹{doc.consultation_fee}</p>
-                      <p className="text-gray-400 text-xs">Fee</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1 mb-3">
-                    <p className="text-gray-500 text-xs">📅 {info.days}</p>
-                    {info.phone && <p className="text-gray-500 text-xs">📞 {info.phone}</p>}
-                    {info.hospital && <p className="text-gray-500 text-xs">🏥 {info.hospital}</p>}
-                    <p className="text-gray-400 text-xs">📍 Indore, MP</p>
-                  </div>
-
-                  {bookingId === doc.id ? (
-                    <div className="space-y-2">
-                      <input type="datetime-local"
-                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-400 transition-all"
-                        value={datetime}
-                        onChange={(e) => setDatetime(e.target.value)}
-                        min={new Date().toISOString().slice(0, 16)} />
-                      <div className="flex gap-2">
-                        <button onClick={() => handleBook(doc.id)}
-                          className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2 rounded-xl text-xs font-semibold hover:shadow-md transition-all">
-                          ✓ Confirm
-                        </button>
-                        <button onClick={() => { setBookingId(null); setDatetime('') }}
-                          className="flex-1 border border-gray-200 py-2 rounded-xl text-xs hover:bg-gray-50 transition-all text-gray-500">
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <button onClick={() => setBookingId(doc.id)}
-                      className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300">
-                      Book Appointment
-                    </button>
-                  )}
-                </div>
+                <h3 className="font-bold text-white text-sm">{doc.name || `Dr. #${doc.id}`}</h3>
+                <p className="text-teal-100 text-xs mt-1 font-medium">{doc.specialization}</p>
+                <div className="absolute top-2 right-2 bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">⭐ 4.8</div>
               </div>
-            )
-          })}
+
+              {/* ── CARD BODY ── */}
+              <div className="p-4">
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  <div className="bg-teal-50 rounded-xl p-2 text-center">
+                    <p className="text-teal-600 font-bold text-sm">{doc.experience}yr</p>
+                    <p className="text-gray-400 text-xs">Experience</p>
+                  </div>
+                  <div className="bg-cyan-50 rounded-xl p-2 text-center">
+                    <p className="text-cyan-600 font-bold text-sm">₹{doc.consultation_fee}</p>
+                    <p className="text-gray-400 text-xs">Fee</p>
+                  </div>
+                </div>
+
+                {/* ── Address — no duplication ── */}
+                <div className="space-y-1 mb-3">
+                  <p className="text-gray-500 text-xs">📅 {doc.available_days}</p>
+                  {doc.phone    && <p className="text-gray-500 text-xs">📞 {doc.phone}</p>}
+                  {doc.address  && <p className="text-gray-500 text-xs">🏥 {doc.address}</p>}
+                  <p className="text-gray-400 text-xs">📍 {doc.city || 'Indore'}, MP</p>
+                </div>
+
+                {bookingId === doc.id ? (
+                  <div className="space-y-2">
+                    <input type="datetime-local"
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-400 transition-all"
+                      value={datetime}
+                      onChange={(e) => setDatetime(e.target.value)}
+                      min={new Date().toISOString().slice(0, 16)} />
+                    <div className="flex gap-2">
+                      <button onClick={() => handleBook(doc.id)}
+                        className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2 rounded-xl text-xs font-semibold hover:shadow-md transition-all">
+                        ✓ Confirm
+                      </button>
+                      <button onClick={() => { setBookingId(null); setDatetime('') }}
+                        className="flex-1 border border-gray-200 py-2 rounded-xl text-xs hover:bg-gray-50 transition-all text-gray-500">
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => setBookingId(doc.id)}
+                    className="w-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white py-2.5 rounded-xl font-semibold text-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300">
+                    Book Appointment
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
