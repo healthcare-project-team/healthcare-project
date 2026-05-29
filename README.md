@@ -142,9 +142,9 @@ After running backend server:
 
 | Name | Role |
 |------|------|
-| Rajvardhan Singh Chouhan | Lead Backend Developer & Project Owner |
-| Rajvardhan Singh Sisodiya | Frontend & Software Developer|
-| Rajkumar Patidar | Web Developer & UI Contributor |
+| Rajvardhan Singh Chouhan | Database Developer & Project Owner |
+| Rajvardhan Singh Sisodiya | backend  & Software Developer|
+| Rajkumar Patidar | Frontend DEveloper & UI Contributor |
 
 GitHub: https://github.com/rajvardhan-here
 
