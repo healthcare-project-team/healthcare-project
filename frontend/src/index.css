@@ -15,7 +15,7 @@ body {
 
 /* Glow effects */
 .glow-teal {
-  box-shadow: 0 0 20px rgba(20, 184, 166, 0.4);
+  box-shadow: 0 0 21px rgba(20, 184, 166, 0.4);
 }
 .glow-teal:hover {
   box-shadow: 0 0 35px rgba(20, 184, 166, 0.7);
